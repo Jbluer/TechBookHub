@@ -17,6 +17,7 @@ function layout(c, title, content) {
           href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
           rel="stylesheet"
         />
+        <link rel="stylesheet" href="/stylesheets/bundle.css" />
       </head>
       <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
