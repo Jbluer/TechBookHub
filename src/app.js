@@ -110,6 +110,7 @@ app.notFound((c) => {
   const user = session?.user;
   return c.html(
     layout(
+      c,
       'Not Found',
       html`
         <div class="text-center py-5">
@@ -133,6 +134,7 @@ app.onError((error, c) => {
   const user = session?.user;
   return c.html(
     layout(
+      c,
       'Error',
       html`
         <div class="py-4">

@@ -21,6 +21,7 @@ app.get('/new', ensureAuthenticated, (c) => {
   const { user } = c.get('session');
   return c.html(
     layout(
+      c,
       '技術書の登録',
       html`
         <div class="col-md-8 offset-md-2">
@@ -96,6 +97,7 @@ app.get('/:bookId', async (c) => {
 
   return c.html(
     layout(
+      c,
       book.title,
       html`
         <div class="card mb-4">
