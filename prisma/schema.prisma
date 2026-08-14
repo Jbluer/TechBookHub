@@ -1,73 +1,58 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-generator client {
-  provider = "prisma-client-js"
-}
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+generator client {
+  provider = "prisma-client-js"
+}
+
 model User {
-  userId         Int            @id
-  username       String         @unique @db.VarChar(255)
-  availabilities Availability[]
-  schedules      Schedule[]
-  comments       Comment[]
+  userId       Int           @id
+  username     String        @unique @db.VarChar(255)
+  books        Book[]
+  readingStatuses ReadingStatus[]
+  reviews      Review[]
 
   @@map(name: "users")
 }
 
-model Schedule {
-  scheduleId   String      @id @db.Uuid
-  scheduleName String      @db.VarChar(255)
-  memo         String      @db.Text
-  createdBy    Int
-  updatedAt    DateTime    @db.Timestamptz(6)
-  user         User        @relation(fields: [createdBy], references: [userId], onDelete: Cascade)
-  candidates   Candidate[]
-  comments     Comment[]
+model Book {
+  bookId          String          @id @db.Uuid
+  title           String          @db.VarChar(255)
+  author          String          @db.VarChar(255)
+  description     String          @db.Text
+  createdBy       Int
+  updatedAt       DateTime        @db.Timestamptz(6)
+  user            User            @relation(fields: [createdBy], references: [userId], onDelete: Cascade)
+  readingStatuses ReadingStatus[]
+  reviews         Review[]
 
   @@index(fields: [createdBy])
-  @@map(name: "schedules")
+  @@map(name: "books")
 }
 
-model Candidate {
-  candidateId    Int            @id @default(autoincrement())
-  candidateName  String         @db.VarChar(255)
-  scheduleId     String         @db.Uuid
-  schedule       Schedule       @relation(fields: [scheduleId], references: [scheduleId], onDelete: Cascade)
-  availabilities Availability[]
+model ReadingStatus {
+  readingStatusCompositeId String @id @db.VarChar(255)
+  bookId                   String @db.Uuid
+  userId                   Int
+  status                   Int    // 0: 気になる/積読, 1: 読書中, 2: 読了
+  book                     Book   @relation(fields: [bookId], references: [bookId], onDelete: Cascade)
+  user                     User   @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
-  @@index(fields: [scheduleId])
-  @@map(name: "candidates")
+  @@unique([bookId, userId])
+  @@map(name: "reading_statuses")
 }
 
-model Availability {
-  candidateId  Int
-  userId       Int
-  availability Int       @default(0)
-  scheduleId   String    @db.Uuid
-  candidate    Candidate @relation(fields: [candidateId], references: [candidateId], onDelete: Cascade)
-  user         User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+model Review {
+  reviewCompositeId String   @id @db.VarChar(255)
+  bookId            String   @db.Uuid
+  userId            Int
+  reviewText        String   @db.Text
+  updatedAt         DateTime @db.Timestamptz(6)
+  book              Book     @relation(fields: [bookId], references: [bookId], onDelete: Cascade)
+  user              User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
-  @@id(fields: [candidateId, userId], name: "availabilityCompositeId")
-  @@index(fields: [scheduleId])
-  @@map(name: "availabilities")
-}
-
-model Comment {
-  scheduleId String   @db.Uuid
-  userId     Int
-  comment    String   @db.VarChar(255)
-  user       User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
-  schedule   Schedule @relation(fields: [scheduleId], references: [scheduleId], onDelete: Cascade)
-
-  @@id([scheduleId, userId], name: "commentCompositeId")
-  @@map(name: "comments")
+  @@unique([bookId, userId])
+  @@map(name: "reviews")
 }
