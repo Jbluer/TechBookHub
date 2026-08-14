@@ -1,3 +1,4 @@
+import './style.css';
 import $ from 'jquery';
 
 // 読書ステータス切り替え（非同期）

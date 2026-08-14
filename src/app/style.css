@@ -1,0 +1,18 @@
+.hover-shadow {
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.hover-shadow:hover {
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.2) !important;
+  transform: translateY(-4px);
+  border-color: #0d6efd; /* Bootstrapのprimary色 */
+}
+
+.hover-shadow:hover .card-title a {
+  color: #0d6efd !important;
+}
+
+.hover-shadow:hover .card-footer {
+  border-top-color: #0d6efd;
+}
