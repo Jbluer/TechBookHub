@@ -45,10 +45,10 @@ app.get('/', async (c) => {
             : books.map(
                 (book) => html`
                   <div class="col-md-6 mb-4">
-                    <div class="card h-100 shadow-sm">
+                    <div class="card h-100 shadow-sm hover-shadow" style="transition: box-shadow 0.15s ease-in-out, transform 0.15s ease-in-out;">
                       <div class="card-body">
                         <h5 class="card-title">
-                          <a href="/books/${book.bookId}" class="text-decoration-none text-dark">
+                          <a href="/books/${book.bookId}" class="text-decoration-none text-dark stretched-link">
                             ${book.title}
                           </a>
                         </h5>
