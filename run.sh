@@ -1,5 +1,5 @@
 # 依存関係をインストール
-yarn install
+yarn install --production=false
 
 # prisma/schema.prisma の内容をデータベースに反映
 npx prisma db push
