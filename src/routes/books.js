@@ -87,8 +87,8 @@ app.get('/:bookId', async (c) => {
 
   // 現在ログインユーザーの読書ステータス
   const myStatus = user
-    ? book.readingStatuses.find((s) => s.userId === user.id)?.status ?? 0
-    : 0;
+    ? book.readingStatuses.find((s) => s.userId === user.id)?.status ?? null
+    : null;
 
   // 自分のレビュー
   const myReview = user

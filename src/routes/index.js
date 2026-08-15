@@ -38,10 +38,69 @@ app.get('/', async (c) => {
           </div>
         </div>
 
-        <h3 class="mb-3">登録された本の一覧</h3>
+        <h3 class="mb-3">おすすめ本の一覧</h3>
         <div class="row">
           ${books.length === 0
             ? html`<p class="text-muted">まだ登録されている本がありません。</p>`
+            : books.map(
+                (book) => html`
+                  <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm hover-shadow" style="transition: box-shadow 0.15s ease-in-out, transform 0.15s ease-in-out;">
+                      <div class="card-body">
+                        <h5 class="card-title">
+                          <a href="/books/${book.bookId}" class="text-decoration-none text-dark stretched-link">
+                            ${book.title}
+                          </a>
+                        </h5>
+                        <h6 class="card-subtitle mb-2 text-muted">著者: ${book.author}</h6>
+                        <p class="card-text">${book.description}</p>
+                      </div>
+                      <div class="card-footer bg-transparent text-muted small d-flex justify-content-between">
+                        <span>登録者: ${book.user.username}</span>
+                        <span>レビュー: ${book.reviews.length}件</span>
+                      </div>
+                    </div>
+                  </div>
+                `
+              )}
+        </div>
+      `
+    )
+  );
+});
+
+// ログインチェックミドルウェア
+const ensureAuthenticated = async (c, next) => {
+  const session = c.get('session');
+  if (!session?.user) {
+    return c.redirect('/login');
+  }
+  await next();
+};
+
+// 気になる/積読リスト
+app.get('/mystatus/:status', ensureAuthenticated, async (c) => {
+  const { user } = c.get('session');
+  const status = parseInt(c.req.param('status'), 10);
+  const statusLabels = { 0: '気になる / 積読', 1: '読書中', 2: '読了' };
+
+  const books = await prisma.book.findMany({
+    where: {
+      readingStatuses: { some: { userId: user.id, status } },
+    },
+    orderBy: { updatedAt: 'desc' },
+    include: { user: true, reviews: true },
+  });
+
+  return c.html(
+    layout(
+      c,
+      statusLabels[status] ?? 'マイリスト',
+      html`
+        <h3 class="mb-3">${statusLabels[status] ?? ''}の本一覧</h3>
+        <div class="row">
+          ${books.length === 0
+            ? html`<p class="text-muted">該当する本がありません。</p>`
             : books.map(
                 (book) => html`
                   <div class="col-md-6 mb-4">

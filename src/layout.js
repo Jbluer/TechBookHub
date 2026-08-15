@@ -26,6 +26,7 @@ function layout(c, title, content) {
             <div class="d-flex align-items-center">
               ${user
                 ? html`
+                    <a href="/mystatus/0" class="btn btn-outline-light btn-sm me-2">気になる/積読リスト</a>
                     <span class="text-light me-3">${user.login} としてログイン中</span>
                     <a href="/logout" class="btn btn-outline-light btn-sm">ログアウト</a>
                   `
